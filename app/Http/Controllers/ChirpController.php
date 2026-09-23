@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\HTTP;
+use Illuminate\Support\Facades\Http;
+// use App\Events\ChirpCreated;
+use App\Events\UserRegistered;
+use App\Models\resident;
 
 class ChirpController extends Controller
 {
@@ -14,11 +17,34 @@ class ChirpController extends Controller
      */
     public function index()
     {
-        $response = HTTP::get('https://jsonplaceholder.typicode.com/todos/');
-        $data = $response->json();
-        dd($data);
+        $url = 'http://localhost:8001/api/v1/data';
+        $apiKey = config('api.key');
 
-        return view('welcome');
+        $response = Http::withHeaders([
+            'X-API-KEY' => $apiKey,
+            'API_KEY' => $apiKey,
+        ])->get($url, [
+            'api_key' => $apiKey,
+        ]);
+
+        if (! $response->successful()) {
+            return dd([
+                'message' => 'Upstream API request failed',
+                'status' => $response->status(),
+                'body' => $response->body(),
+                'headers' => $response->headers(),
+            ]);
+        }
+
+        $payload = $response->json();
+        $users = data_get($payload, 'data', []);
+
+        return view('welcome', ['users' => $users]);
+    }
+    public function resident()
+    {
+
+        return view('resident');
     }
 
     /**
@@ -35,12 +61,26 @@ class ChirpController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+    * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
-    {
-        //
-    }
+
+public function store(Request $request)
+{
+    $validatedData = $request->validate([
+        'name'     => 'required|string|max:255',
+        'LastName' => 'required|string|max:255',
+        'email'    => 'nullable|email|max:255',
+        'note'     => 'nullable|string|max:1000',
+        'phone'    => 'required|string|max:20',
+    ]);
+
+    $user = Resident::create($validatedData);
+
+    // Trigger the event
+    event(new UserRegistered($user));
+
+    return redirect()->back()->with('success', 'Resident data submitted successfully!');
+}
 
     /**
      * Display the specified resource.

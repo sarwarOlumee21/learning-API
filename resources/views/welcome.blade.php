@@ -36,8 +36,21 @@
         }
     </style>
 </head>
-<body>
+<!-- <body>
+    @foreach ($users as $user)
+        <div class="card">
+            <h2>{{ $user['name'] ?? 'نام‌کاربری' }}</h2>
+            <p><strong>ID:</strong> {{ $user['id'] ?? 'نامشخص' }}</p>
+            <p><strong>Email:</strong> {{ $user['email'] ?? 'نامشخص' }}</p>
+            <p><strong>Verified:</strong> {{ $user['email_verified_at'] ? 'Yes' : 'No' }}</p>
+            <p><strong>Created:</strong> {{ $user['created_at'] }}</p>
+            <p><strong>Updated:</strong> {{ $user['updated_at'] }}</p>
+        </div>
+    @endforeach -->
 
-
+<div>
+    <h1>just for testing <b>Event listeners</b></h1>
+    <a href="{{ route('resident') }}">View Residents</a>
+</div>
 </body>
 </html>

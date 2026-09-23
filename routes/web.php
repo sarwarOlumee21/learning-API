@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ChirpController;
+use App\Http\Controllers\IntegrationController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,4 +15,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [ChirpController::class, 'index']);
+// Route::get('/', [ChirpController::class, 'index']);
+Route::get('/', [ChirpController::class, 'resident']);
+Route::post('/store', [ChirpController::class, 'store'])->name('store');
+// Route::get('/integrated-data', [IntegrationController::class, 'fetchFromSystemOne']);
+// Route::get('/test-route', function () {
+//     dd('route works');
+// });
